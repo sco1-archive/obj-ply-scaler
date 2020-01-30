@@ -42,7 +42,7 @@ class ObjFile(NamedTuple):
 
         e.g. [1, 2, 3] -> "v 1 2 3\n"
         """
-        return f"v {vertex[0]} {vertex[1]} {vertex[2]}\n"
+        return f"v {vertex[0]:.3} {vertex[1]:.3} {vertex[2]:.3}\n"
 
 
 def parse_obj(filepath: Path) -> ObjFile:

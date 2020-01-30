@@ -45,7 +45,7 @@ class PlyFile(NamedTuple):
 
         e.g. [1, 2, 3, 4] -> "1 2 3 4\n"
         """
-        return f"{vertex[0]} {vertex[1]} {vertex[2]} {vertex[3]}\n"
+        return f"{vertex[0]:.3} {vertex[1]:.3} {vertex[2]:.3} {vertex[3]:3}\n"
 
 
 def parse_ply(filepath: Path) -> PlyFile:
