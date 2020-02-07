@@ -14,7 +14,7 @@ class PlyFile(NamedTuple):
     vertices: List[List[float]]  # Represented as a list of [X, Y, Z, confidence] floats
     faces: List[str]
 
-    def scale_vertices(self, factor: int = 1000) -> None:
+    def scale_vertices(self, factor: float = 1000) -> None:
         """Scale all vertices by the provided `factor`."""
         for idx, vertex in enumerate(self.vertices):
             # Scale only the components, not the confidence
@@ -38,6 +38,15 @@ class PlyFile(NamedTuple):
             # Write faces straight back
             f.write("".join(face for face in self.faces))
 
+    def add_header_comment(self, header_comment: str) -> None:
+        """
+        Append the provided `header_line` to the existing file header.
+
+        PLY header comments are suffixed by `"comment"` and are before the `"end header"` statement.
+        """
+        # Insert at -1 so we go before the "end header" statement
+        self.header.insert(-1, f"comment {header_comment}\n")
+
     @staticmethod
     def vertex_to_string(vertex: List[float]) -> str:
         """
@@ -45,7 +54,7 @@ class PlyFile(NamedTuple):
 
         e.g. [1, 2, 3, 4] -> "1 2 3 4\n"
         """
-        return f"{vertex[0]:.3} {vertex[1]:.3} {vertex[2]:.3} {vertex[3]:3}\n"
+        return f"{vertex[0]:.5} {vertex[1]:.5} {vertex[2]:.5} {vertex[3]:5}\n"
 
 
 def parse_ply(filepath: Path) -> PlyFile:

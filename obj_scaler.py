@@ -14,7 +14,7 @@ class ObjFile(NamedTuple):
     vertices: List[List[float]]  # Represented as a list of [X, Y, Z] floats
     faces: List[str]
 
-    def scale_vertices(self, factor: int = 1000) -> None:
+    def scale_vertices(self, factor: float = 1000) -> None:
         """Scale all vertices by the provided `factor`."""
         for idx, vertex in enumerate(self.vertices):
             self.vertices[idx] = [(coord * factor) for coord in vertex]
@@ -35,6 +35,14 @@ class ObjFile(NamedTuple):
             # Write faces straight back
             f.write("".join(face for face in self.faces))
 
+    def add_header_comment(self, header_comment: str) -> None:
+        """
+        Append the provided `header_comment` to the existing file header.
+
+        OBJ headers are suffixed by "`#`"
+        """
+        self.header.append(f"# {header_comment}\n")
+
     @staticmethod
     def vertex_to_string(vertex: List[float]) -> str:
         """
@@ -42,7 +50,7 @@ class ObjFile(NamedTuple):
 
         e.g. [1, 2, 3] -> "v 1 2 3\n"
         """
-        return f"v {vertex[0]:.3} {vertex[1]:.3} {vertex[2]:.3}\n"
+        return f"v {vertex[0]:.5} {vertex[1]:.5} {vertex[2]:.5}\n"
 
 
 def parse_obj(filepath: Path) -> ObjFile:
