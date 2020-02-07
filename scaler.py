@@ -20,13 +20,18 @@ class ScanFileList(NamedTuple):
     obj: List[Path]
     ply: List[Path]
 
+    @property
+    def n_scans(self) -> int:
+        """Calculate the total number of scans in the container."""
+        return len(self.obj) + len(self.ply)
+
 
 @click.command()
 @click.option(
     "--filepath",
     default=".",
     help="Path to scan or directory of scans to scale. [Default: .]",
-    type=click_pathlib.Path(),
+    type=click_pathlib.Path(exists=True),
 )
 @click.option("--in-unit", "-i", default="m", help="Incoming unit of measurement. [Default: m]")
 @click.option("--out-unit", "-o", default="mm", help="Outgoing unit of measurement. [Default: mm]")
@@ -37,21 +42,25 @@ class ScanFileList(NamedTuple):
     help="Recurse through child directories & process all scans. [Default: False]",
 )
 def main_cli(filepath: Path, in_unit: str, out_unit: str, recurse: bool) -> None:
-    """CLI Glue for obj_scaler & ply_scaler."""
-    # TODO: Provide CLI feedback on files being processed (progress bar?)
+    """CLI glue for obj_scaler & ply_scaler."""
     scale_factor = calc_scale_factor(in_unit, out_unit)
     files_to_scale = find_scans(filepath, recurse)
+    print(f"Scaling from '{in_unit}' to '{out_unit}' (Factor: {scale_factor})")
+    print(f"Discovered {files_to_scale.n_scans} scan(s)\n")
+
     for obj_filepath in files_to_scale.obj:
         obj = parse_obj(obj_filepath)
         obj.scale_vertices(scale_factor)
         obj.add_header_comment(out_unit)
         obj.to_file(generate_output_filename(obj_filepath, out_unit))
+        print(f"Scaled: {obj_filepath}")
 
     for ply_filepath in files_to_scale.ply:
         ply = parse_ply(ply_filepath)
         ply.scale_vertices(scale_factor)
         ply.add_header_comment(out_unit)
         ply.to_file(generate_output_filename(ply_filepath, out_unit))
+        print(f"Scaled: {ply_filepath}")
 
 
 def find_scans(filepath: Path, recurse: bool) -> ScanFileList:
