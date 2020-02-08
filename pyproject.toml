@@ -1,12 +1,15 @@
 [tool.poetry]
 name = "obj-ply-scaler"
-version = "0.1.0"
+version = "1.0.0"
 description = "Quick scaling of OBJ and PLY files"
 authors = ["S. Co1 <sco1.git@gmail.com>"]
 license = "The Unlicense"
 
 [tool.poetry.dependencies]
 python = "^3.7"
+click = "^7.0"
+click-pathlib = "^2019.12"
+pint = "^0.10"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^19.10b0"}
