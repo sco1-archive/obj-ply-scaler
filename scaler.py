@@ -30,7 +30,7 @@ class ScanFileList(NamedTuple):
 @click.option(
     "--filepath",
     default=".",
-    help="Path to scan or directory of scans to scale. [Default: .]",
+    help="Path to scan file or directory of scans to scale. [Default: .]",
     type=click_pathlib.Path(exists=True),
 )
 @click.option("--in-unit", "-i", default="m", help="Incoming unit of measurement. [Default: m]")
@@ -39,13 +39,13 @@ class ScanFileList(NamedTuple):
     "--recurse/--no-recurse",
     "-r",
     default=False,
-    help="Recurse through child directories & process all scans. [Default: False]",
+    help="Recurse through child directories & process all scans. [Default: --no-recurse]",
 )
 def main_cli(filepath: Path, in_unit: str, out_unit: str, recurse: bool) -> None:
     """CLI glue for obj_scaler & ply_scaler."""
     scale_factor = calc_scale_factor(in_unit, out_unit)
     files_to_scale = find_scans(filepath, recurse)
-    print(f"Scaling from '{in_unit}' to '{out_unit}' (Factor: {scale_factor})")
+    print(f"Scaling from '{in_unit}' to '{out_unit}' (Factor: {scale_factor:.3})")
     print(f"Discovered {files_to_scale.n_scans} scan(s)\n")
 
     for obj_filepath in files_to_scale.obj:
