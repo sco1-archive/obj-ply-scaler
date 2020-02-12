@@ -1,6 +1,6 @@
 import warnings
 from pathlib import Path
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Optional
 
 import click
 import click_pathlib
@@ -41,10 +41,18 @@ class ScanFileList(NamedTuple):
     default=False,
     help="Recurse through child directories & process all scans. [Default: --no-recurse]",
 )
-def main_cli(filepath: Path, in_unit: str, out_unit: str, recurse: bool) -> None:
+@click.option(
+    "--skip",
+    "-s",
+    help="Optionally skip scaling of either *.PLY or *.OBJ files",
+    type=click.Choice(["PLY", "OBJ"], case_sensitive=False),
+)
+def main_cli(
+    filepath: Path, in_unit: str, out_unit: str, recurse: bool, skip: Optional[str]
+) -> None:
     """CLI glue for obj_scaler & ply_scaler."""
     scale_factor = calc_scale_factor(in_unit, out_unit)
-    files_to_scale = find_scans(filepath, recurse)
+    files_to_scale = find_scans(filepath, recurse, skip)
     print(f"Scaling from '{in_unit}' to '{out_unit}' (Factor: {scale_factor:.3})")
     print(f"Discovered {files_to_scale.n_scans} scan(s)\n")
 
@@ -63,7 +71,7 @@ def main_cli(filepath: Path, in_unit: str, out_unit: str, recurse: bool) -> None
         print(f"Scaled: {ply_filepath}")
 
 
-def find_scans(filepath: Path, recurse: bool) -> ScanFileList:
+def find_scans(filepath: Path, recurse: bool, skip: Optional[str]) -> ScanFileList:
     """
     Identify OBJ and PLY scan(s) available for scaling.
 
@@ -97,6 +105,14 @@ def find_scans(filepath: Path, recurse: bool) -> ScanFileList:
         else:
             scan_files.obj.extend(filepath.glob("*.obj"))
             scan_files.ply.extend(filepath.glob("*.ply"))
+
+    # Rather than adding a bunch of logic flow to the file parsing itself, let's be lazy and just
+    # dump out the files at the end.
+    if skip:
+        if skip.lower() == "obj":
+            scan_files.obj = []
+        elif skip.lower() == "ply":
+            scan_files.ply = []
 
     return scan_files
 
