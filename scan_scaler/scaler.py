@@ -4,9 +4,9 @@ from typing import List, NamedTuple
 
 import click
 import click_pathlib
-from obj_scaler import parse_obj
 from pint import UnitRegistry
-from ply_scaler import parse_ply
+from scan_scaler.obj_scaler import parse_obj
+from scan_scaler.ply_scaler import parse_ply
 
 
 # Initialize a Quantity instance from Pint's default list of units and prefixes

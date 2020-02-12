@@ -7,6 +7,8 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+*.spec
+*.whl
 
 # Jupyter
 .ipynb_checkpoints
