@@ -38,6 +38,7 @@ When an `*.obj` or `*.ply` file is discovered it is parsed & scaled according to
 | `-i,--in-unit`                 | Incoming unit of measurement<sup>2</sup>                     | meters            |
 | `-o, --out-unit`               | Outgoing unit of measurement<sup>2</sup>                     | millimeters       |
 | `-r, --recurse / --no-recurse` | Recurse through child directories & process all scans.       | `--no-recurse`    |
+| `-s, --skip`                   | Optionally skip scaling of either *.PLY or *.OBJ files       | `None`            |
 
 **Notes:**
 1. When a directory of scans is provided for scaling, to simplify path case-sensitivity considerations for discovery of scan files on operating systems that are not Windows, file extensions are assumed to always be lowercase (e.g. `.obj` or `.ply`). Other file extension cases will not be discovered for scaling.
@@ -55,11 +56,20 @@ Scaled: some_path/01234-some_scan.ply
 
 ```bash
 $ python scaler.py --filepath ./scan_files/
-Discovered 8 scan(s)
+Discovered 4 scan(s)
 Scaling from 'm' to 'mm' (Factor: 1000.0) ...
 
 Scaled: scan_files/01234-some_scan.obj
 Scaled: scan_files/01235-some_scan.obj
+Scaled: scan_files/01234-some_scan.ply
+Scaled: scan_files/01235-some_scan.ply
+```
+
+```bash
+$ python scaler.py --filepath ./scan_files/ --skip OBJ
+Discovered 2 scan(s)
+Scaling from 'm' to 'mm' (Factor: 1000.0) ...
+
 Scaled: scan_files/01234-some_scan.ply
 Scaled: scan_files/01235-some_scan.ply
 ```
